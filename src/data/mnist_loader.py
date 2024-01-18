@@ -4,6 +4,7 @@ import torch
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 
 class MNISTLoader:
@@ -17,12 +18,16 @@ class MNISTLoader:
             [transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))]
         )
 
+        data_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "../../data/external"
+        )
+
         # Download MNIST dataset
         train_dataset = datasets.MNIST(
-            "./data", train=True, download=True, transform=transform
+            data_path, train=True, download=True, transform=transform
         )
         test_dataset = datasets.MNIST(
-            "./data", train=False, download=True, transform=transform
+            data_path, train=False, download=True, transform=transform
         )
 
         # Move datasets to the specified device
@@ -76,6 +81,9 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     mnist_loader = MNISTLoader(batch_size=5, shuffle=True, device=device)
+
+    # get the shape of the training data
+    print(mnist_loader.get_train_loader().dataset.data.shape)
 
     # Display some sample images
     mnist_loader.show_samples()
